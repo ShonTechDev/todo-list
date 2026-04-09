@@ -9,4 +9,4 @@ Installation Instructions:
 
 How to run the Development Server:
 1.Run your development server (I used Vite), using: npm run dev
-2.Open your browser and run it at: http://localhost:5174 to see it live. 
+2.Open your browser and run it at: http://localhost:5173 to see it live. 
