@@ -6,18 +6,34 @@ import TodoForm from './TodoForm.jsx';
 function App() {
   const [todoList, setTodoList] = useState([]);
 
-function addTodo(todoTitle) { //receives new todo text and adds it into todoList state
+function addTodo(todoTitle) { 
     const newTodo = {
-      id: Date.now(), //generates a unique ID for each todo
+      id: Date.now(), //new unique ID for each todo
       title: todoTitle,
+      isCompleted: false,
     };
-    setTodoList((previous) => [newTodo, ...previous]) //puts the new to do first, maintains the old ones
+    setTodoList((previous) => [newTodo, ...previous]) 
 }
+function completeTodo(id) {
+  const updatedTodoList = todoList.map((todo) => {
+    if (todo.id === id) {
+      return {
+        ...todo,
+        isCompleted: true,
+      };
+    }
+
+    return todo;
+  });
+
+  setTodoList(updatedTodoList);
+}
+
   return (
     <div>
       <h1>Todo List</h1>
-      <TodoForm onAddTodo={addTodo} /> {/*passes the handler to TodoForm */}
-      <TodoList todoList={todoList} />
+      <TodoForm onAddTodo={addTodo} /> 
+      <TodoList todoList={todoList} onCompleteTodo={completeTodo} />
     </div>
   );
 }
