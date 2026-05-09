@@ -1,39 +1,32 @@
-import { useRef } from 'react'; //imports the useRef hook; helps this file receive the TodoForm as a prop
+import { useState } from 'react';
 
 function TodoForm({ onAddTodo }) {
-    const inputRef = useRef();
+  const [workingTodoTitle, setWorkingTodoTitle] = useState('');
 
-    const handleAddTodo = (event) => {
-        event.preventDefault(); //stops the form from refreshing the page
+  const handleAddTodo = (event) => {
+    event.preventDefault();
 
-        const todoTitle = event.target.todoTitle.value.trim(); //.trim() blocks whitespace-only todos
-        
-        if (todoTitle && todoTitle !== "") {
-            onAddTodo(todoTitle); //sends the text back up to App
-            event.target.reset();
-            inputRef.current.focus(); //puts the cursor back in the input
-        }
-    };
+    onAddTodo(workingTodoTitle);
 
-    return (
+    setWorkingTodoTitle('');
+  };
+
+  return (
     <form onSubmit={handleAddTodo}>
-        <label htmlFor="todoTitle">Todo</label>
-        <input
-        ref={inputRef}
+      <label htmlFor="todoTitle">Todo</label>
+      <input
         type="text"
         id="todoTitle"
         name="todoTitle"
-        placeholder={'Todo text'}
-        required
-        />
-        <button type="submit">  {/*//used instead of onclick, it didn't work */}
+        placeholder="Todo text"
+        value={workingTodoTitle}
+        onChange={(event) => setWorkingTodoTitle(event.target.value)}
+      />
+      <button type="submit" disabled={!workingTodoTitle.trim()}>
         Add Todo
-        </button>
+      </button>
     </form>
-    );
+  );
 }
 
 export default TodoForm;
-
-
-
