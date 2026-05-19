@@ -1,41 +1,60 @@
 import { useState } from 'react';
-import './App.css'
-import TodoList from './TodoList.jsx';
-import TodoForm from './TodoForm.jsx';
+import './App.css';
+import TodoForm from './features/TodoForm.jsx';
+import TodoList from './features/TodoList/TodoList.jsx';
 
 function App() {
   const [todoList, setTodoList] = useState([]);
 
-function addTodo(todoTitle) { 
+  function addTodo(todoTitle) {
     const newTodo = {
-      id: Date.now(), //new unique ID for each todo
+      id: Date.now(),
       title: todoTitle,
       isCompleted: false,
     };
-    setTodoList((previous) => [newTodo, ...previous]) 
-}
-function completeTodo(id) {
-  const updatedTodoList = todoList.map((todo) => {
-    if (todo.id === id) {
-      return {
-        ...todo,
-        isCompleted: true,
-      };
-    }
 
-    return todo;
-  });
+    setTodoList((previous) => [newTodo, ...previous]);
+  }
 
-  setTodoList(updatedTodoList);
-}
+  function completeTodo(id) {
+    const updatedTodoList = todoList.map((todo) => {
+      if (todo.id === id) {
+        return {
+          ...todo,
+          isCompleted: true,
+        };
+      }
+
+      return todo;
+    });
+
+    setTodoList(updatedTodoList);
+  }
+
+
+  function updateTodo(editedTodo) {
+    const updatedTodos = todoList.map((todo) => {
+      if (todo.id === editedTodo.id) {
+        return { ...editedTodo };
+      }
+
+      return todo;
+    });
+
+    setTodoList(updatedTodos);
+  }
 
   return (
     <div>
       <h1>Todo List</h1>
-      <TodoForm onAddTodo={addTodo} /> 
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo} />
+      <TodoForm onAddTodo={addTodo} />
+      <TodoList
+        todoList={todoList}
+        onCompleteTodo={completeTodo}
+        onUpdateTodo={updateTodo}
+      />
     </div>
   );
 }
 
-export default App
+export default App;
