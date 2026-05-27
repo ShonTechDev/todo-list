@@ -10,7 +10,7 @@ function SortBy({
       <select
         id="sortBy"
         value={sortBy}
-        onChange={(event) => setSortBy(event.target.value)}
+        onChange={(event) => onSortByChange(event.target.value)}
       >
         <option value="creationDate">Creation Date</option>
         <option value="title">Title</option>
