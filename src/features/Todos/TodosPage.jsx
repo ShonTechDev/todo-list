@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import TodoForm from './TodoForm.jsx';
 import TodoList from './TodoList/TodoList.jsx';
-import SortBy from './SortBy.jsx';
-import FilterInput from './FilterInput.jsx';
+import SortBy from '../../shared/SortBy.jsx';
+import FilterInput from '../../shared/FilterInput.jsx';
 import useDebounce from '../../utils/useDebounce.js';
 
 function TodosPage({ token }) {
   const [todoList, setTodoList] = useState([]);
   const [error, setError] = useState('');
+  const [filterError, setFilterError] = useState('');
   const [isTodoListLoading, setIsTodoListLoading] = useState(false);
   const [sortBy, setSortBy] = useState('creationDate');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterTerm, setFilterTerm] = useState('');
-  const debouncedFilterTerm = useDebounce(filterTerm, 500);
+  const debouncedFilterTerm = useDebounce(filterTerm, 300);
   const [dataVersion, setDataVersion] = useState(0);
   const invalidateCache = useCallback(() => {
       console.log('Invalidating memo cache after todo mutation');
@@ -55,9 +56,14 @@ function TodosPage({ token }) {
 
       const data = await response.json();
       setTodoList(data.tasks);
-    } catch (error) {
-      setError(error.message);
-    } finally {
+      setFilterError('');
+      } catch (error) {
+        if (debouncedFilterTerm || sortBy !== 'creationDate' || sortDirection !== 'desc') {
+          setFilterError(`Error filtering/sorting todos: ${error.message}`);
+        } else {
+          setError(`Error fetching todos: ${error.message}`);
+        }
+      } finally {
       setIsTodoListLoading(false);
     }
   }
@@ -231,6 +237,28 @@ function TodosPage({ token }) {
             Clear Error
           </button>
          </div>
+      )}
+
+      {filterError && (
+        <div>
+          <p>{filterError}</p>
+
+          <button type="button" onClick={() => setFilterError('')}>
+            Clear Filter Error
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setFilterTerm('');
+              setSortBy('creationDate');
+              setSortDirection('desc');
+              setFilterError('');
+            }}
+          >
+            Reset Filters
+          </button>
+        </div>
       )}
 
     {isTodoListLoading && <p>Loading todos...</p>}
