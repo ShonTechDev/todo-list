@@ -1,7 +1,12 @@
+import { useMemo } from 'react';
 import TodoListItem from './TodoListItem.jsx';
 
-function TodoList({ todoList, onCompleteTodo, onUpdateTodo }) {
-  const filteredTodoList = todoList.filter((todo) => todo.isCompleted === false);
+function TodoList({ todoList, dataVersion, onCompleteTodo, onUpdateTodo }) {
+  const filteredTodoList = useMemo(() => {
+    console.log('Filtering incomplete todos');
+
+    return todoList.filter((todo) => todo.isCompleted === false);
+  }, [todoList, dataVersion]);
 
   return filteredTodoList.length === 0 ? (
     <p>Add todo above to get started</p>
