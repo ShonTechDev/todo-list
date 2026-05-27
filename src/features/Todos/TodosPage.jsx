@@ -16,7 +16,6 @@ function TodosPage({ token }) {
   const debouncedFilterTerm = useDebounce(filterTerm, 300);
   const [dataVersion, setDataVersion] = useState(0);
   const invalidateCache = useCallback(() => {
-      // console.log('Invalidating memo cache after todo mutation');
       setDataVersion((prev) => prev + 1);
   }, []);
 
@@ -263,16 +262,16 @@ function TodosPage({ token }) {
 
     {isTodoListLoading && <p>Loading todos...</p>}
 
-      <FilterInput
-        filterTerm={filterTerm}
-        onFilterTermChange={setFilterTerm}
-      />
-
       <SortBy
         sortBy={sortBy}
-        setSortBy={setSortBy}
+        onSortByChange={setSortBy}
         sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
+        onSortDirectionChange={setSortDirection}
+      />
+
+      <FilterInput
+        filterTerm={filterTerm}
+        onFilterChange={setFilterTerm}
       />
 
       <TodoForm onAddTodo={addTodo} />

@@ -1,12 +1,13 @@
-function FilterInput({ filterTerm, onFilterTermChange }) {
+function FilterInput({ filterTerm, onFilterChange }) {
   return (
     <div>
-      <label htmlFor="filterTerm">Search todos</label>
+      <label htmlFor="filterInput">Search todos</label>
       <input
-        id="filterTerm"
+        id="filterInput"
         type="text"
         value={filterTerm}
-        onChange={(event) => onFilterTermChange(event.target.value)}
+        placeholder="Search by title..."
+        onChange={(event) => onFilterChange(event.target.value)}
       />
     </div>
   );
