@@ -10,3 +10,14 @@ Installation Instructions:
 How to run the Development Server:
 1.Run your development server (I used Vite), using: npm run dev
 2.Open your browser and run it at: http://localhost:5173 to see it live. 
+
+## Environment Setup
+
+This project uses a Vite proxy and requires a local `.env` file.
+
+1. Copy `.env.example`
+2. Rename the copy to `.env`
+3. Confirm it contains:
+
+```env
+VITE_TARGET=https://ctd-learns-node-l42tx.ondigitalocean.app
