@@ -6,21 +6,72 @@ function AuthProvider({ children }) {
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
 
-  function logon({ email, token }) {
-    setEmail(email);
-    setToken(token);
+  async function login(email, password) {
+    try {
+      const response = await fetch('/api/users/logon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200 && data.name && data.csrfToken) {
+        setEmail(data.name);
+        setToken(data.csrfToken);
+
+        return {
+          success: true,
+          message: '',
+        };
+      }
+
+      return {
+        success: false,
+        message: `Authentication failed: ${data?.message}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Error: ${error.name} | ${error.message}`,
+      };
+    }
   }
 
-  function logoff() {
-    setEmail('');
-    setToken('');
+  async function logout() {
+    try {
+      await fetch('/api/users/logoff', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+      });
+
+      setEmail('');
+      setToken('');
+
+      return {
+        success: true,
+        message: '',
+      };
+    } catch (error) {
+      setEmail('');
+      setToken('');
+
+      return {
+        success: false,
+        message: `Error: ${error.name} | ${error.message}`,
+      };
+    }
   }
 
   const value = {
     email,
     token,
-    logon,
-    logoff,
+    login,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
