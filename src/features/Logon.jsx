@@ -17,7 +17,7 @@ function Logon() {
     const result = await login(email, password);
 
     if (!result.success) {
-      setAuthError(result.message);
+      setAuthError(result.error);
     }
 
     setIsLoggingOn(false);

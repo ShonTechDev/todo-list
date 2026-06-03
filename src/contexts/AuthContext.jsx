@@ -23,18 +23,18 @@ function AuthProvider({ children }) {
 
         return {
           success: true,
-          message: '',
+          error: '',
         };
       }
 
       return {
         success: false,
-        message: `Authentication failed: ${data?.message}`,
+        error: `Authentication failed: ${data?.message}`,
       };
     } catch (error) {
       return {
         success: false,
-        message: `Error: ${error.name} | ${error.message}`,
+        error: `Error: ${error.name} | ${error.message}`,
       };
     }
   }
@@ -54,7 +54,7 @@ function AuthProvider({ children }) {
 
       return {
         success: true,
-        message: '',
+        error: '',
       };
     } catch (error) {
       setEmail('');
@@ -62,7 +62,7 @@ function AuthProvider({ children }) {
 
       return {
         success: false,
-        message: `Error: ${error.name} | ${error.message}`,
+        error: `Error: ${error.name} | ${error.message}`,
       };
     }
   }
