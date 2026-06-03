@@ -72,8 +72,8 @@ function TodosPage() {
       } catch (error) {
         if (
           debouncedFilterTerm ||
-          sortBy !== 'creationDate' ||
-          sortDirection !== 'desc'
+          sortBy !== 'createdDate' ||
+          sortDirection !== 'asc'
         ) {
           dispatch({
             type: TODO_ACTIONS.SET_FILTER_ERROR,

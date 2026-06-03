@@ -23,8 +23,6 @@ export const TODO_ACTIONS = {
   SET_SORT_DIRECTION: 'SET_SORT_DIRECTION',
   SET_FILTER_TERM: 'SET_FILTER_TERM',
   RESET_FILTERS: 'RESET_FILTERS',
-
-  INVALIDATE_CACHE: 'INVALIDATE_CACHE',
 };
 
 export const initialTodoState = {
@@ -204,13 +202,7 @@ export function todoReducer(state, action) {
         filterError: '',
       };
 
-    case TODO_ACTIONS.INVALIDATE_CACHE:
-      return {
-        ...state,
-        dataVersion: state.dataVersion + 1,
-      };
-
     default:
-      return state;
+      throw new Error(`Unknown action type: ${action.type}`);
   }
 }
