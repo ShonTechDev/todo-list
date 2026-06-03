@@ -70,6 +70,7 @@ function AuthProvider({ children }) {
   const value = {
     email,
     token,
+    isAuthenticated: !!token,
     login,
     logout,
   };
