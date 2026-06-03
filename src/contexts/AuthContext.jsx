@@ -3,8 +3,13 @@ import { createContext, useContext, useState } from 'react';
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
-  const [email, setEmail] = useState('');
-  const [token, setToken] = useState('');
+  const [email, setEmail] = useState(() => {
+    return localStorage.getItem('email') || '';
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('token') || '';
+  });
 
   async function login(email, password) {
     try {
@@ -20,6 +25,9 @@ function AuthProvider({ children }) {
       if (response.status === 200 && data.name && data.csrfToken) {
         setEmail(data.name);
         setToken(data.csrfToken);
+
+        localStorage.setItem('email', data.name);
+        localStorage.setItem('token', data.csrfToken);
 
         return {
           success: true,
@@ -52,6 +60,9 @@ function AuthProvider({ children }) {
       setEmail('');
       setToken('');
 
+      localStorage.removeItem('email');
+      localStorage.removeItem('token');
+
       return {
         success: true,
         error: '',
@@ -59,6 +70,9 @@ function AuthProvider({ children }) {
     } catch (error) {
       setEmail('');
       setToken('');
+
+      localStorage.removeItem('email');
+      localStorage.removeItem('token');
 
       return {
         success: false,
