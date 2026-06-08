@@ -1,24 +1,33 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import TodoForm from './TodoForm.jsx';
 import TodoList from './TodoList/TodoList.jsx';
 import SortBy from '../../shared/SortBy.jsx';
 import FilterInput from '../../shared/FilterInput.jsx';
 import useDebounce from '../../utils/useDebounce.js';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import {
+  TODO_ACTIONS,
+  initialTodoState,
+  todoReducer,
+} from '../../reducers/todoReducer.js';
 
-function TodosPage({ token }) {
-  const [todoList, setTodoList] = useState([]);
-  const [error, setError] = useState('');
-  const [filterError, setFilterError] = useState('');
-  const [isTodoListLoading, setIsTodoListLoading] = useState(false);
-  const [sortBy, setSortBy] = useState('creationDate');
-  const [sortDirection, setSortDirection] = useState('desc');
-  const [filterTerm, setFilterTerm] = useState('');
+function TodosPage() {
+  const { token } = useAuth();
+
+  const [state, dispatch] = useReducer(todoReducer, initialTodoState);
+
+  const {
+    todoList,
+    error,
+    filterError,
+    isTodoListLoading,
+    sortBy,
+    sortDirection,
+    filterTerm,
+    dataVersion,
+  } = state;
+
   const debouncedFilterTerm = useDebounce(filterTerm, 300);
-  const [dataVersion, setDataVersion] = useState(0);
-
-const invalidateCache = useCallback(() => {
-  setDataVersion((prev) => prev + 1);
-}, []);
 
   useEffect(() => {
     if (!token) {
@@ -26,8 +35,7 @@ const invalidateCache = useCallback(() => {
     }
 
     async function fetchTodos() {
-      setIsTodoListLoading(true);
-      setError('');
+      dispatch({ type: TODO_ACTIONS.FETCH_START });
 
       try {
         const params = new URLSearchParams({
@@ -56,25 +64,36 @@ const invalidateCache = useCallback(() => {
         }
 
         const data = await response.json();
-        setTodoList(data.tasks);
-        setFilterError('');
+
+        dispatch({
+          type: TODO_ACTIONS.FETCH_SUCCESS,
+          payload: { todos: data.tasks },
+        });
       } catch (error) {
         if (
           debouncedFilterTerm ||
-          sortBy !== 'creationDate' ||
-          sortDirection !== 'desc'
+          sortBy !== 'createdDate' ||
+          sortDirection !== 'asc'
         ) {
-          setFilterError(`Error filtering/sorting todos: ${error.message}`);
+          dispatch({
+            type: TODO_ACTIONS.SET_FILTER_ERROR,
+            payload: {
+              error: `Error filtering/sorting todos: ${error.message}`,
+            },
+          });
         } else {
-          setError(`Error fetching todos: ${error.message}`);
+          dispatch({
+            type: TODO_ACTIONS.FETCH_ERROR,
+            payload: {
+              error: `Error fetching todos: ${error.message}`,
+            },
+          });
         }
-      } finally {
-        setIsTodoListLoading(false);
       }
     }
 
     fetchTodos();
-  }, [token, sortBy, sortDirection, debouncedFilterTerm]);
+  }, [token, sortBy, sortDirection, debouncedFilterTerm, dataVersion]);
 
   async function addTodo(todoTitle) {
     const newTodo = {
@@ -83,8 +102,10 @@ const invalidateCache = useCallback(() => {
       isCompleted: false,
     };
 
-    setTodoList((previous) => [newTodo, ...previous]);
-    setError('');
+    dispatch({
+      type: TODO_ACTIONS.ADD_TODO_START,
+      payload: { todo: newTodo },
+    });
 
     try {
       const response = await fetch('/api/tasks', {
@@ -106,22 +127,21 @@ const invalidateCache = useCallback(() => {
 
       const savedTodo = await response.json();
 
-      setTodoList((previous) =>
-        previous.map((todo) => {
-          if (todo.id === newTodo.id) {
-            return savedTodo;
-          }
-
-          return todo;
-        })
-      );
-
-      invalidateCache();
+      dispatch({
+        type: TODO_ACTIONS.ADD_TODO_SUCCESS,
+        payload: {
+          originalId: newTodo.id,
+          savedTodo,
+        },
+      });
     } catch (error) {
-      setTodoList((previous) =>
-        previous.filter((todo) => todo.id !== newTodo.id)
-      );
-      setError(error.message);
+      dispatch({
+        type: TODO_ACTIONS.ADD_TODO_ERROR,
+        payload: {
+          originalId: newTodo.id,
+          error: error.message,
+        },
+      });
     }
   }
 
@@ -137,16 +157,13 @@ const invalidateCache = useCallback(() => {
       isCompleted: true,
     };
 
-    setTodoList((previous) =>
-      previous.map((todo) => {
-        if (todo.id === id) {
-          return completedTodo;
-        }
-
-        return todo;
-      })
-    );
-    setError('');
+    dispatch({
+      type: TODO_ACTIONS.COMPLETE_TODO_START,
+      payload: {
+        id,
+        completedTodo,
+      },
+    });
 
     try {
       const response = await fetch(`/api/tasks/${id}`, {
@@ -165,18 +182,18 @@ const invalidateCache = useCallback(() => {
         throw new Error('Could not complete todo');
       }
 
-      invalidateCache();
+      dispatch({
+        type: TODO_ACTIONS.COMPLETE_TODO_SUCCESS,
+      });
     } catch (error) {
-      setTodoList((previous) =>
-        previous.map((todo) => {
-          if (todo.id === id) {
-            return originalTodo;
-          }
-
-          return todo;
-        })
-      );
-      setError(error.message);
+      dispatch({
+        type: TODO_ACTIONS.COMPLETE_TODO_ERROR,
+        payload: {
+          id,
+          originalTodo,
+          error: error.message,
+        },
+      });
     }
   }
 
@@ -187,16 +204,13 @@ const invalidateCache = useCallback(() => {
       return;
     }
 
-    setTodoList((previous) =>
-      previous.map((todo) => {
-        if (todo.id === editedTodo.id) {
-          return { ...editedTodo };
-        }
-
-        return todo;
-      })
-    );
-    setError('');
+    dispatch({
+      type: TODO_ACTIONS.UPDATE_TODO_START,
+      payload: {
+        id: editedTodo.id,
+        editedTodo: { ...editedTodo },
+      },
+    });
 
     try {
       const response = await fetch(`/api/tasks/${editedTodo.id}`, {
@@ -216,23 +230,26 @@ const invalidateCache = useCallback(() => {
         throw new Error('Could not update todo');
       }
 
-      invalidateCache();
+      dispatch({
+        type: TODO_ACTIONS.UPDATE_TODO_SUCCESS,
+      });
     } catch (error) {
-      setTodoList((previous) =>
-        previous.map((todo) => {
-          if (todo.id === editedTodo.id) {
-            return originalTodo;
-          }
-
-          return todo;
-        })
-      );
-      setError(error.message);
+      dispatch({
+        type: TODO_ACTIONS.UPDATE_TODO_ERROR,
+        payload: {
+          id: editedTodo.id,
+          originalTodo,
+          error: error.message,
+        },
+      });
     }
   }
 
   function handleFilterChange(value) {
-    setFilterTerm(value);
+    dispatch({
+      type: TODO_ACTIONS.SET_FILTER_TERM,
+      payload: { filterTerm: value },
+    });
   }
 
   return (
@@ -240,7 +257,10 @@ const invalidateCache = useCallback(() => {
       {error && (
         <div>
           <p>{error}</p>
-          <button type="button" onClick={() => setError('')}>
+          <button
+            type="button"
+            onClick={() => dispatch({ type: TODO_ACTIONS.CLEAR_ERROR })}
+          >
             Clear Error
           </button>
         </div>
@@ -250,18 +270,18 @@ const invalidateCache = useCallback(() => {
         <div>
           <p>{filterError}</p>
 
-          <button type="button" onClick={() => setFilterError('')}>
+          <button
+            type="button"
+            onClick={() =>
+              dispatch({ type: TODO_ACTIONS.CLEAR_FILTER_ERROR })
+            }
+          >
             Clear Filter Error
           </button>
 
           <button
             type="button"
-            onClick={() => {
-              setFilterTerm('');
-              setSortBy('creationDate');
-              setSortDirection('desc');
-              setFilterError('');
-            }}
+            onClick={() => dispatch({ type: TODO_ACTIONS.RESET_FILTERS })}
           >
             Reset Filters
           </button>
@@ -272,9 +292,19 @@ const invalidateCache = useCallback(() => {
 
       <SortBy
         sortBy={sortBy}
-        onSortByChange={setSortBy}
+        onSortByChange={(value) =>
+          dispatch({
+            type: TODO_ACTIONS.SET_SORT_BY,
+            payload: { sortBy: value },
+          })
+        }
         sortDirection={sortDirection}
-        onSortDirectionChange={setSortDirection}
+        onSortDirectionChange={(value) =>
+          dispatch({
+            type: TODO_ACTIONS.SET_SORT_DIRECTION,
+            payload: { sortDirection: value },
+          })
+        }
       />
 
       <FilterInput
