@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Header() {
@@ -7,11 +8,22 @@ function Header() {
     <header>
       <h1>Todo List</h1>
 
-      {token && (
-        <button type="button" onClick={logout}>
-          Log Out
-        </button>
-      )}
+      <nav>
+        <NavLink to="/about">About</NavLink>
+
+        {token ? (
+          <>
+            <NavLink to="/todos">Todos</NavLink>
+            <NavLink to="/profile">Profile</NavLink>
+
+            <button type="button" onClick={logout}>
+              Log Out
+            </button>
+          </>
+        ) : (
+          <NavLink to="/login">Log In</NavLink>
+        )}
+      </nav>
     </header>
   );
 }
