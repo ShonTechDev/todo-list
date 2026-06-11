@@ -31,8 +31,9 @@ function ProfilePage() {
         }
 
         const data = await response.json();
+        const tasks = Array.isArray(data) ? data : data.tasks || [];
 
-        setTodoList(data.tasks);
+        setTodoList(tasks);
       } catch (error) {
         setStatsError(`Error loading profile stats: ${error.message}`);
       } finally {
