@@ -5,6 +5,11 @@ function Navigation() {
   const { token, logout } = useAuth();
   const navigate = useNavigate();
 
+  const navLinkStyles = ({ isActive }) => ({
+    fontWeight: isActive ? 'bold' : 'normal',
+    textDecoration: isActive ? 'underline' : 'none',
+  });
+
   async function handleLogout() {
     await logout();
     navigate('/login');
@@ -12,19 +17,28 @@ function Navigation() {
 
   return (
     <nav>
-      <NavLink to="/about">About</NavLink>
+      <NavLink to="/about" style={navLinkStyles}>
+        About
+      </NavLink>
 
       {token ? (
         <>
-          <NavLink to="/todos">Todos</NavLink>
-          <NavLink to="/profile">Profile</NavLink>
+          <NavLink to="/todos" style={navLinkStyles}>
+            Todos
+          </NavLink>
+
+          <NavLink to="/profile" style={navLinkStyles}>
+            Profile
+          </NavLink>
 
           <button type="button" onClick={handleLogout}>
             Log Out
           </button>
         </>
       ) : (
-        <NavLink to="/login">Log In</NavLink>
+        <NavLink to="/login" style={navLinkStyles}>
+          Log In
+        </NavLink>
       )}
     </nav>
   );

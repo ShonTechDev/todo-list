@@ -47,6 +47,8 @@ function ProfilePage() {
   const totalTodos = todoList.length;
   const completedTodos = todoList.filter((todo) => todo.isCompleted).length;
   const activeTodos = totalTodos - completedTodos;
+  const completionPercentage =
+    totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : null;
 
   return (
     <div>
@@ -67,6 +69,10 @@ function ProfilePage() {
           <li>Total todos: {totalTodos}</li>
           <li>Active todos: {activeTodos}</li>
           <li>Completed todos: {completedTodos}</li>
+          <li>
+            Completion:{' '}
+            {completionPercentage !== null ? `${completionPercentage}%` : 'N/A'}
+          </li>
         </ul>
       )}
     </div>
