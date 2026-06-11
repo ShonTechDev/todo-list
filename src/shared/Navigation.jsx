@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Navigation() {
-  const { token, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const navLinkStyles = ({ isActive }) => ({
@@ -21,7 +21,7 @@ function Navigation() {
         About
       </NavLink>
 
-      {token ? (
+      {isAuthenticated ? (
         <>
           <NavLink to="/todos" style={navLinkStyles}>
             Todos
