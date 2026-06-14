@@ -101,3 +101,11 @@ Possible future improvements include:
 - Add due dates or priority labels
 - Improve automatic logout handling after an unauthorized API response
 - Add toast notifications for successful actions
+
+## 👤 Contact
+Created by Shonta P.
+- GitHub: https://github.com/shontechdev 
+- Portfolio: https://shontechdev.github.io/ 
+
+## 🪪 License
+This project is licensed under the MIT License.
