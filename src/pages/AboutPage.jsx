@@ -1,9 +1,11 @@
+import styles from '../App.module.css';
+
 function AboutPage() {
   return (
-    <section className="page about-page">
-      <div className="page-card">
-        <div className="page-heading">
-          <p className="page-heading__eyebrow">About the project</p>
+    <section className={`${styles.page} ${styles['about-page']}`}>
+      <div className={styles['page-card']}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>About the project</p>
           <h2>About This Todo App</h2>
 
           <p>
@@ -12,10 +14,10 @@ function AboutPage() {
           </p>
         </div>
 
-        <section className="content-section">
+        <section className={styles['content-section']}>
           <h3>Features</h3>
 
-          <ul className="content-list">
+          <ul className={styles['content-list']}>
             <li>Create new todos</li>
             <li>Mark todos as complete</li>
             <li>Edit todo titles</li>
@@ -25,17 +27,17 @@ function AboutPage() {
           </ul>
         </section>
 
-        <section className="content-section">
+        <section className={styles['content-section']}>
           <h3>Technologies Used</h3>
 
-          <ul className="content-list">
+          <ul className={styles['content-list']}>
             <li>React</li>
             <li>React Router</li>
             <li>Vite</li>
             <li>useReducer</li>
             <li>useContext</li>
             <li>DOMPurify</li>
-            <li>CSS</li>
+            <li>CSS Modules</li>
           </ul>
         </section>
       </div>

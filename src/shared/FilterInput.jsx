@@ -1,6 +1,8 @@
+import styles from '../App.module.css';
+
 function FilterInput({ filterTerm, onFilterChange }) {
   return (
-    <div className="control-group">
+    <div className={styles['control-group']}>
       <label htmlFor="filterInput">Search todos</label>
       <input
         id="filterInput"

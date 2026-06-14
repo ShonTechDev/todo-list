@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Navigation() {
@@ -6,7 +7,9 @@ function Navigation() {
   const navigate = useNavigate();
 
   const getNavLinkClassName = ({ isActive }) =>
-    `nav-link ${isActive ? 'nav-link--active' : ''}`;
+    isActive
+      ? `${styles['nav-link']} ${styles['nav-link--active']}`
+      : styles['nav-link'];
 
   async function handleLogout() {
     await logout();
@@ -14,7 +17,7 @@ function Navigation() {
   }
 
   return (
-    <nav className="site-nav" aria-label="Main navigation">
+    <nav className={styles['site-nav']} aria-label="Main navigation">
       <NavLink to="/about" className={getNavLinkClassName}>
         About
       </NavLink>
@@ -31,7 +34,7 @@ function Navigation() {
 
           <button
             type="button"
-            className="button button--ghost"
+            className={`${styles.button} ${styles['button--ghost']}`}
             onClick={handleLogout}
           >
             Log Out

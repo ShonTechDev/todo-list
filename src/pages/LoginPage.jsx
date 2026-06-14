@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import Logon from '../features/Logon.jsx';
 
@@ -17,10 +18,10 @@ function LoginPage() {
   }, [isAuthenticated, navigate, from]);
 
   return (
-    <section className="page login-page">
-      <div className="page-card">
-        <div className="page-heading">
-          <p className="page-heading__eyebrow">Welcome back</p>
+    <section className={`${styles.page} ${styles['login-page']}`}>
+      <div className={styles['page-card']}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>Welcome back</p>
           <h2>Log In</h2>
           <p>Log in to view and manage your personal todo list.</p>
         </div>

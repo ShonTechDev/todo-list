@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from '../../App.module.css';
 import TextInputWithLabel from '../../shared/TextInputWithLabel.jsx';
 import {
   isValidTodoTitle,
@@ -26,7 +27,7 @@ function TodoForm({ onAddTodo }) {
   };
 
   return (
-    <form className="todo-form" onSubmit={handleAddTodo}>
+    <form className={styles['todo-form']} onSubmit={handleAddTodo}>
       <TextInputWithLabel
         elementId="todoTitle"
         labelText="Todo"
@@ -34,13 +35,13 @@ function TodoForm({ onAddTodo }) {
         onChange={(event) => setWorkingTodoTitle(event.target.value)}
       />
 
-      <div className="todo-form__helper">
+      <div className={styles['todo-form__helper']}>
         <span>
           {workingTodoTitle.trim().length}/{TODO_TITLE_MAX_LENGTH} characters
         </span>
 
         {isOverCharacterLimit && (
-          <span className="todo-form__error">
+          <span className={styles['todo-form__error']}>
             Todo must be {TODO_TITLE_MAX_LENGTH} characters or fewer.
           </span>
         )}

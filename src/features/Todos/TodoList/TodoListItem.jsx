@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import styles from '../../../App.module.css';
 import TextInputWithLabel from '../../../shared/TextInputWithLabel.jsx';
 import {
   isValidTodoTitle,
   normalizeTodoTitle,
 } from '../../../utils/todoValidation.js';
 
-function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
+function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [workingTitle, setWorkingTitle] = useState(todo.title);
 
@@ -35,11 +36,25 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
     setIsEditing(false);
   }
 
+  function handleDelete() {
+    const shouldDelete = window.confirm(`Delete "${todo.title}"?`);
+
+    if (shouldDelete) {
+      onDeleteTodo(todo.id);
+    }
+  }
+
   return (
-    <li className={`todo-item ${todo.isCompleted ? 'todo-item--completed' : ''}`}>
-      <form className="todo-item__form" onSubmit={handleUpdate}>
+    <li
+      className={
+        todo.isCompleted
+          ? `${styles['todo-item']} ${styles['todo-item--completed']}`
+          : styles['todo-item']
+      }
+    >
+      <form className={styles['todo-item__form']} onSubmit={handleUpdate}>
         {isEditing ? (
-          <div className="todo-item__edit">
+          <div className={styles['todo-item__edit']}>
             <TextInputWithLabel
               elementId={`editTodo${todo.id}`}
               labelText="Edit Todo"
@@ -47,7 +62,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
               onChange={handleEdit}
             />
 
-            <div className="todo-item__actions">
+            <div className={styles['todo-item__actions']}>
               <button type="button" onClick={handleCancel}>
                 Cancel
               </button>
@@ -58,8 +73,8 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
             </div>
           </div>
         ) : (
-          <div className="todo-item__view">
-            <label className="todo-item__checkbox-label">
+          <div className={styles['todo-item__view']}>
+            <label className={styles['todo-item__checkbox-label']}>
               <input
                 type="checkbox"
                 id={`checkbox${todo.id}`}
@@ -67,14 +82,20 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
                 disabled={todo.isCompleted}
                 onChange={() => onCompleteTodo(todo.id)}
               />
-              <span className="sr-only">Complete {todo.title}</span>
+              <span className={styles['sr-only']}>Complete {todo.title}</span>
             </label>
 
-            <span className="todo-item__title">{todo.title}</span>
+            <span className={styles['todo-item__title']}>{todo.title}</span>
 
-            <button type="button" onClick={() => setIsEditing(true)}>
-              Edit
-            </button>
+            <div className={styles['todo-item__actions']}>
+              <button type="button" onClick={() => setIsEditing(true)}>
+                Edit
+              </button>
+
+              <button type="button" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
           </div>
         )}
       </form>

@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { useSearchParams } from 'react-router';
+import styles from '../App.module.css';
 import TodoForm from '../features/Todos/TodoForm.jsx';
 import TodoList from '../features/Todos/TodoList/TodoList.jsx';
 import SortBy from '../shared/SortBy.jsx';
@@ -249,6 +250,47 @@ function TodosPage() {
     }
   }
 
+  async function deleteTodo(id) {
+    const originalIndex = todoList.findIndex((todo) => todo.id === id);
+    const originalTodo = todoList[originalIndex];
+
+    if (!originalTodo) {
+      return;
+    }
+
+    dispatch({
+      type: TODO_ACTIONS.DELETE_TODO_START,
+      payload: { id },
+    });
+
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Could not delete todo');
+      }
+
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_SUCCESS,
+      });
+    } catch (error) {
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_ERROR,
+        payload: {
+          originalIndex,
+          originalTodo,
+          error: error.message,
+        },
+      });
+    }
+  }
+
   function handleFilterChange(value) {
     dispatch({
       type: TODO_ACTIONS.SET_FILTER_TERM,
@@ -257,19 +299,22 @@ function TodosPage() {
   }
 
   return (
-    <section className="page todos-page">
-      <div className="page-card todos-page__card">
-        <div className="page-heading">
-          <p className="page-heading__eyebrow">Plan your day</p>
+    <section className={`${styles.page} ${styles['todos-page']}`}>
+      <div className={`${styles['page-card']} ${styles['todos-page__card']}`}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>Plan your day</p>
           <h2>My Todos</h2>
           <p>
-            Add, update, complete, filter, and sort tasks from one organized
-            workspace.
+            Add, update, complete, delete, filter, and sort tasks from one
+            organized workspace.
           </p>
         </div>
 
         {error && (
-          <div className="alert alert--error" role="alert">
+          <div
+            className={`${styles.alert} ${styles['alert--error']}`}
+            role="alert"
+          >
             <p>{error}</p>
             <button
               type="button"
@@ -281,10 +326,13 @@ function TodosPage() {
         )}
 
         {filterError && (
-          <div className="alert alert--warning" role="alert">
+          <div
+            className={`${styles.alert} ${styles['alert--warning']}`}
+            role="alert"
+          >
             <p>{filterError}</p>
 
-            <div className="button-row">
+            <div className={styles['button-row']}>
               <button
                 type="button"
                 onClick={() =>
@@ -304,9 +352,14 @@ function TodosPage() {
           </div>
         )}
 
-        {isTodoListLoading && <p className="loading-state">Loading todos...</p>}
+        {isTodoListLoading && (
+          <p className={styles['loading-state']}>Loading todos...</p>
+        )}
 
-        <section className="todos-page__controls" aria-label="Todo controls">
+        <section
+          className={styles['todos-page__controls']}
+          aria-label="Todo controls"
+        >
           <SortBy
             sortBy={sortBy}
             onSortByChange={(value) =>
@@ -339,6 +392,7 @@ function TodosPage() {
           dataVersion={dataVersion}
           onCompleteTodo={completeTodo}
           onUpdateTodo={updateTodo}
+          onDeleteTodo={deleteTodo}
           statusFilter={statusFilter}
         />
       </div>

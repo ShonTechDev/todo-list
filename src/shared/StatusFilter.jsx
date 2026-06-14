@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router';
+import styles from '../App.module.css';
 
 function StatusFilter() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,7 +16,7 @@ function StatusFilter() {
   };
 
   return (
-    <div className="control-group">
+    <div className={styles['control-group']}>
       <label htmlFor="statusFilter">Show</label>
       <select
         id="statusFilter"

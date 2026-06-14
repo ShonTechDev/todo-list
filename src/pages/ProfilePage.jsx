@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function ProfilePage() {
@@ -51,31 +52,34 @@ function ProfilePage() {
     totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : null;
 
   return (
-    <section className="page profile-page">
-      <div className="page-card">
-        <div className="page-heading">
-          <p className="page-heading__eyebrow">Your progress</p>
+    <section className={`${styles.page} ${styles['profile-page']}`}>
+      <div className={styles['page-card']}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>Your progress</p>
           <h2>Profile</h2>
           <p>View your account details and todo completion progress.</p>
         </div>
 
-        <p className="profile-email">
+        <p className={styles['profile-email']}>
           <strong>Email:</strong> {email}
         </p>
 
-        <section className="content-section">
+        <section className={styles['content-section']}>
           <h3>Todo Statistics</h3>
 
           {statsError && (
-            <p className="alert alert--error" role="alert">
+            <p
+              className={`${styles.alert} ${styles['alert--error']}`}
+              role="alert"
+            >
               {statsError}
             </p>
           )}
 
           {isLoadingStats ? (
-            <p className="loading-state">Loading todo stats...</p>
+            <p className={styles['loading-state']}>Loading todo stats...</p>
           ) : (
-            <ul className="stats-list">
+            <ul className={styles['stats-list']}>
               <li>
                 <span>Total todos</span>
                 <strong>{totalTodos}</strong>

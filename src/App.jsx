@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router';
-import './App.css';
+import styles from './App.module.css';
 import Header from './shared/Header.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -11,10 +11,10 @@ import RequireAuth from './components/RequireAuth.jsx';
 
 function App() {
   return (
-    <div className="app-shell">
+    <div className={styles['app-shell']}>
       <Header />
 
-      <main className="app-main">
+      <main className={styles['app-main']}>
         <Routes>
           <Route path="/" element={<HomePage />} />
 

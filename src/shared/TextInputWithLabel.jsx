@@ -1,3 +1,5 @@
+import styles from '../App.module.css';
+
 function TextInputWithLabel({
   elementId,
   labelText,
@@ -6,7 +8,7 @@ function TextInputWithLabel({
   ...inputProps
 }) {
   return (
-    <div className="input-group">
+    <div className={styles['input-group']}>
       <label htmlFor={elementId}>{labelText}</label>
       <input
         type="text"
