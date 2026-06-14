@@ -43,9 +43,9 @@ function TodoList({
   };
 
   return filteredTodoList.todos.length === 0 ? (
-    <p>{getEmptyMessage()}</p>
+    <p className="empty-state">{getEmptyMessage()}</p>
   ) : (
-    <ul>
+    <ul className="todo-list">
       {filteredTodoList.todos.map((todo) => (
         <TodoListItem
           key={todo.id}

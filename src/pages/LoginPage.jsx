@@ -17,10 +17,17 @@ function LoginPage() {
   }, [isAuthenticated, navigate, from]);
 
   return (
-    <div>
-      <h2>Log In</h2>
-      <Logon />
-    </div>
+    <section className="page login-page">
+      <div className="page-card">
+        <div className="page-heading">
+          <p className="page-heading__eyebrow">Welcome back</p>
+          <h2>Log In</h2>
+          <p>Log in to view and manage your personal todo list.</p>
+        </div>
+
+        <Logon />
+      </div>
+    </section>
   );
 }
 

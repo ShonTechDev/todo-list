@@ -5,10 +5,8 @@ function Navigation() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  const navLinkStyles = ({ isActive }) => ({
-    fontWeight: isActive ? 'bold' : 'normal',
-    textDecoration: isActive ? 'underline' : 'none',
-  });
+  const getNavLinkClassName = ({ isActive }) =>
+    `nav-link ${isActive ? 'nav-link--active' : ''}`;
 
   async function handleLogout() {
     await logout();
@@ -16,27 +14,31 @@ function Navigation() {
   }
 
   return (
-    <nav>
-      <NavLink to="/about" style={navLinkStyles}>
+    <nav className="site-nav" aria-label="Main navigation">
+      <NavLink to="/about" className={getNavLinkClassName}>
         About
       </NavLink>
 
       {isAuthenticated ? (
         <>
-          <NavLink to="/todos" style={navLinkStyles}>
+          <NavLink to="/todos" className={getNavLinkClassName}>
             Todos
           </NavLink>
 
-          <NavLink to="/profile" style={navLinkStyles}>
+          <NavLink to="/profile" className={getNavLinkClassName}>
             Profile
           </NavLink>
 
-          <button type="button" onClick={handleLogout}>
+          <button
+            type="button"
+            className="button button--ghost"
+            onClick={handleLogout}
+          >
             Log Out
           </button>
         </>
       ) : (
-        <NavLink to="/login" style={navLinkStyles}>
+        <NavLink to="/login" className={getNavLinkClassName}>
           Log In
         </NavLink>
       )}

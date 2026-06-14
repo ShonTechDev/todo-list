@@ -24,10 +24,14 @@ function Logon() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {authError && <p>{authError}</p>}
+    <form className="auth-form" onSubmit={handleSubmit}>
+      {authError && (
+        <p className="alert alert--error" role="alert">
+          {authError}
+        </p>
+      )}
 
-      <div>
+      <div className="input-group">
         <label htmlFor="email">Email</label>
         <input
           id="email"
@@ -38,7 +42,7 @@ function Logon() {
         />
       </div>
 
-      <div>
+      <div className="input-group">
         <label htmlFor="password">Password</label>
         <input
           id="password"

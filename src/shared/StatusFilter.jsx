@@ -15,8 +15,8 @@ function StatusFilter() {
   };
 
   return (
-    <div>
-      <label htmlFor="statusFilter">Show:</label>
+    <div className="control-group">
+      <label htmlFor="statusFilter">Show</label>
       <select
         id="statusFilter"
         value={currentStatus}

@@ -51,31 +51,56 @@ function ProfilePage() {
     totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : null;
 
   return (
-    <div>
-      <h2>Profile</h2>
+    <section className="page profile-page">
+      <div className="page-card">
+        <div className="page-heading">
+          <p className="page-heading__eyebrow">Your progress</p>
+          <h2>Profile</h2>
+          <p>View your account details and todo completion progress.</p>
+        </div>
 
-      <p>
-        <strong>Email:</strong> {email}
-      </p>
+        <p className="profile-email">
+          <strong>Email:</strong> {email}
+        </p>
 
-      <h3>Todo Statistics</h3>
+        <section className="content-section">
+          <h3>Todo Statistics</h3>
 
-      {statsError && <p>{statsError}</p>}
+          {statsError && (
+            <p className="alert alert--error" role="alert">
+              {statsError}
+            </p>
+          )}
 
-      {isLoadingStats ? (
-        <p>Loading todo stats...</p>
-      ) : (
-        <ul>
-          <li>Total todos: {totalTodos}</li>
-          <li>Active todos: {activeTodos}</li>
-          <li>Completed todos: {completedTodos}</li>
-          <li>
-            Completion:{' '}
-            {completionPercentage !== null ? `${completionPercentage}%` : 'N/A'}
-          </li>
-        </ul>
-      )}
-    </div>
+          {isLoadingStats ? (
+            <p className="loading-state">Loading todo stats...</p>
+          ) : (
+            <ul className="stats-list">
+              <li>
+                <span>Total todos</span>
+                <strong>{totalTodos}</strong>
+              </li>
+              <li>
+                <span>Active todos</span>
+                <strong>{activeTodos}</strong>
+              </li>
+              <li>
+                <span>Completed todos</span>
+                <strong>{completedTodos}</strong>
+              </li>
+              <li>
+                <span>Completion</span>
+                <strong>
+                  {completionPercentage !== null
+                    ? `${completionPercentage}%`
+                    : 'N/A'}
+                </strong>
+              </li>
+            </ul>
+          )}
+        </section>
+      </div>
+    </section>
   );
 }
 

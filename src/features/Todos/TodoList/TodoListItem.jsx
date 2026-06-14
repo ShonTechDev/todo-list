@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import TextInputWithLabel from '../../../shared/TextInputWithLabel.jsx';
-import { isValidTodoTitle } from '../../../utils/todoValidation.js';
+import {
+  isValidTodoTitle,
+  normalizeTodoTitle,
+} from '../../../utils/todoValidation.js';
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [workingTitle, setWorkingTitle] = useState(todo.title);
+
+  const isWorkingTitleValid = isValidTodoTitle(workingTitle);
 
   function handleCancel() {
     setWorkingTitle(todo.title);
@@ -16,54 +21,61 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   }
 
   function handleUpdate(event) {
-    if (!isEditing) {
-      return;
-    }
-
     event.preventDefault();
 
-    if (!isValidTodoTitle(workingTitle)) {
+    if (!isEditing || !isWorkingTitleValid) {
       return;
     }
 
-    onUpdateTodo({ ...todo, title: workingTitle });
+    onUpdateTodo({
+      ...todo,
+      title: normalizeTodoTitle(workingTitle),
+    });
+
     setIsEditing(false);
   }
 
   return (
-    <li>
-      <form onSubmit={handleUpdate}>
+    <li className={`todo-item ${todo.isCompleted ? 'todo-item--completed' : ''}`}>
+      <form className="todo-item__form" onSubmit={handleUpdate}>
         {isEditing ? (
-          <>
+          <div className="todo-item__edit">
             <TextInputWithLabel
               elementId={`editTodo${todo.id}`}
               labelText="Edit Todo"
               value={workingTitle}
               onChange={handleEdit}
             />
-            <button type="button" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleUpdate}
-              disabled={!isValidTodoTitle(workingTitle)}
-            >
-              Update
-            </button>
-          </>
+
+            <div className="todo-item__actions">
+              <button type="button" onClick={handleCancel}>
+                Cancel
+              </button>
+
+              <button type="submit" disabled={!isWorkingTitleValid}>
+                Update
+              </button>
+            </div>
+          </div>
         ) : (
-          <>
-            <label>
+          <div className="todo-item__view">
+            <label className="todo-item__checkbox-label">
               <input
                 type="checkbox"
                 id={`checkbox${todo.id}`}
                 checked={todo.isCompleted}
+                disabled={todo.isCompleted}
                 onChange={() => onCompleteTodo(todo.id)}
               />
+              <span className="sr-only">Complete {todo.title}</span>
             </label>
-            <span onClick={() => setIsEditing(true)}>{todo.title}</span>
-          </>
+
+            <span className="todo-item__title">{todo.title}</span>
+
+            <button type="button" onClick={() => setIsEditing(true)}>
+              Edit
+            </button>
+          </div>
         )}
       </form>
     </li>

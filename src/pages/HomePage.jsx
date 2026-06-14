@@ -15,9 +15,11 @@ function HomePage() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div>
-      <p>Redirecting...</p>
-    </div>
+    <section className="page">
+      <div className="page-card">
+        <p className="loading-state">Redirecting...</p>
+      </div>
+    </section>
   );
 }
 
