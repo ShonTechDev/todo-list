@@ -8,7 +8,11 @@ function cleanSetCookie(cookie) {
 }
 
 exports.handler = async function handler(event) {
-  const apiPath = event.path.replace('/.netlify/functions/api-proxy', '');
+  let apiPath = event.path;
+
+  apiPath = apiPath.replace('/.netlify/functions/api-proxy', '');
+  apiPath = apiPath.replace(/^\/api/, '');
+
   const queryString = event.rawQuery ? `?${event.rawQuery}` : '';
   const targetUrl = `${API_TARGET}/api${apiPath}${queryString}`;
 
