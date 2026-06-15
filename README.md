@@ -5,8 +5,7 @@ and input validation. This final project brings together React fundamentals, sta
 protected routes, security best practices, and responsive styling.
 
 ## 🚀 Live Demo
-Deployment on Netlify at this link:
-Add deployment link here if deployed.***
+Deployment on Netlify at this link: shontas-react-todoapp.netlify.app
 
 ## 🎥 Demo Video
 Add demo video link here after recording.***
