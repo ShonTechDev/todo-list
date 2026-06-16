@@ -8,7 +8,7 @@ protected routes, security best practices, and responsive styling.
 Deployment on Netlify at this link: shontas-react-todoapp.netlify.app
 
 ## 🎥 Demo Video
-Add demo video link here after recording.***
+live demo: https://youtu.be/ielwZCwrJg8_
 
 ## 📸 Screenshots
 ![Login page ](./screenshots/login-page.png)
