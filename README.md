@@ -72,7 +72,7 @@ For the final project polish, I updated the app with:
 
 ## 🖥️ Installation Instructions & Environment Setup:
 1. Clone the repository using: 
-    - git clone <your-repo-url>
+    - git clone: https://github.com/ShonTechDev/todo-list
 2. Navigate into the project folder: 
     - cd <project-folder>
 3. Install your dependencies using: 
