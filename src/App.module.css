@@ -338,3 +338,13 @@ button:hover:not(:disabled),
   position: absolute;
   left: -9999px;
 }
+
+.site-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav li {
+  display: flex;
+}

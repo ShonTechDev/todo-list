@@ -1,3 +1,5 @@
+/* global exports, Buffer */
+
 const API_TARGET = 'https://ctd-learns-node-l42tx.ondigitalocean.app';
 
 function cleanSetCookie(cookie) {

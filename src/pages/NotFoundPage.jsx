@@ -1,7 +1,10 @@
 import { Link } from 'react-router';
 import styles from '../App.module.css';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 function NotFoundPage() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className={`${styles.page} ${styles['not-found-page']}`}>
       <div className={styles['page-card']}>
@@ -17,16 +20,15 @@ function NotFoundPage() {
             Go to About
           </Link>
 
-          <Link className={styles.button} to="/login">
-            Go to Login
-          </Link>
-
-          <Link
-            className={`${styles.button} ${styles['button--ghost']}`}
-            to="/todos"
-          >
-            Go to Todos
-          </Link>
+          {isAuthenticated ? (
+            <Link className={styles.button} to="/todos">
+              Go to Todos
+            </Link>
+          ) : (
+            <Link className={styles.button} to="/login">
+              Go to Login
+            </Link>
+          )}
         </div>
       </div>
     </section>

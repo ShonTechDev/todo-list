@@ -17,34 +17,46 @@ function Navigation() {
   }
 
   return (
-    <nav className={styles['site-nav']} aria-label="Main navigation">
-      <NavLink to="/about" className={getNavLinkClassName}>
-        About
-      </NavLink>
-
-      {isAuthenticated ? (
-        <>
-          <NavLink to="/todos" className={getNavLinkClassName}>
-            Todos
+    <nav aria-label="Main navigation">
+      <ul className={styles['site-nav']}>
+        <li>
+          <NavLink to="/about" className={getNavLinkClassName}>
+            About
           </NavLink>
+        </li>
 
-          <NavLink to="/profile" className={getNavLinkClassName}>
-            Profile
-          </NavLink>
+        {isAuthenticated ? (
+          <>
+            <li>
+              <NavLink to="/todos" className={getNavLinkClassName}>
+                Todos
+              </NavLink>
+            </li>
 
-          <button
-            type="button"
-            className={`${styles.button} ${styles['button--ghost']}`}
-            onClick={handleLogout}
-          >
-            Log Out
-          </button>
-        </>
-      ) : (
-        <NavLink to="/login" className={getNavLinkClassName}>
-          Log In
-        </NavLink>
-      )}
+            <li>
+              <NavLink to="/profile" className={getNavLinkClassName}>
+                Profile
+              </NavLink>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                className={`${styles.button} ${styles['button--ghost']}`}
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <NavLink to="/login" className={getNavLinkClassName}>
+              Log In
+            </NavLink>
+          </li>
+        )}
+      </ul>
     </nav>
   );
 }

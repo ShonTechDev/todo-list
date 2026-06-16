@@ -19,13 +19,17 @@ function ProfilePage() {
       setStatsError('');
 
       try {
-        const response = await fetch('/api/tasks', {
+        const response = await fetch('/api/tasks?limit=1000', {
           method: 'GET',
           headers: {
             'X-CSRF-TOKEN': token,
           },
           credentials: 'include',
         });
+
+        if (response.status === 401) {
+          throw new Error('Your session expired. Please log out and log back in.');
+        }
 
         if (!response.ok) {
           throw new Error('Could not fetch todo stats');
