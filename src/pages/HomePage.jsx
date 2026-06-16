@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function HomePage() {
@@ -15,9 +16,11 @@ function HomePage() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div>
-      <p>Redirecting...</p>
-    </div>
+    <section className={styles.page}>
+      <div className={styles['page-card']}>
+        <p className={styles['loading-state']}>Redirecting...</p>
+      </div>
+    </section>
   );
 }
 

@@ -1,24 +1,37 @@
 import { Link } from 'react-router';
+import styles from '../App.module.css';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 function NotFoundPage() {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <div>
-      <h2>404 - Page Not Found</h2>
+    <section className={`${styles.page} ${styles['not-found-page']}`}>
+      <div className={styles['page-card']}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>Page not found</p>
+          <h2>404 - Page Not Found</h2>
 
-      <p>The page you are looking for does not exist.</p>
+          <p>The page you are looking for does not exist.</p>
+        </div>
 
-      <ul>
-        <li>
-          <Link to="/about">Go to About</Link>
-        </li>
-        <li>
-          <Link to="/login">Go to Login</Link>
-        </li>
-        <li>
-          <Link to="/todos">Go to Todos</Link>
-        </li>
-      </ul>
-    </div>
+        <div className={styles['button-row']}>
+          <Link className={styles.button} to="/about">
+            Go to About
+          </Link>
+
+          {isAuthenticated ? (
+            <Link className={styles.button} to="/todos">
+              Go to Todos
+            </Link>
+          ) : (
+            <Link className={styles.button} to="/login">
+              Go to Login
+            </Link>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -1,10 +1,17 @@
 import { useState } from 'react';
+import styles from '../../../App.module.css';
 import TextInputWithLabel from '../../../shared/TextInputWithLabel.jsx';
-import { isValidTodoTitle } from '../../../utils/todoValidation.js';
+import {
+  isValidTodoTitle,
+  normalizeTodoTitle,
+} from '../../../utils/todoValidation.js';
 
-function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
+function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [workingTitle, setWorkingTitle] = useState(todo.title);
+  const [isCompletingTodo, setIsCompletingTodo] = useState(false);
+
+  const isWorkingTitleValid = isValidTodoTitle(workingTitle);
 
   function handleCancel() {
     setWorkingTitle(todo.title);
@@ -16,54 +23,99 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   }
 
   function handleUpdate(event) {
-    if (!isEditing) {
-      return;
-    }
-
     event.preventDefault();
 
-    if (!isValidTodoTitle(workingTitle)) {
+    if (!isEditing || !isWorkingTitleValid) {
       return;
     }
 
-    onUpdateTodo({ ...todo, title: workingTitle });
+    onUpdateTodo({
+      ...todo,
+      title: normalizeTodoTitle(workingTitle),
+    });
+
     setIsEditing(false);
   }
 
+  async function handleComplete() {
+    if (todo.isCompleted || isCompletingTodo) {
+      return;
+    }
+
+    setIsCompletingTodo(true);
+
+    try {
+      await onCompleteTodo(todo.id);
+    } finally {
+      setIsCompletingTodo(false);
+    }
+  }
+
+  function handleDelete() {
+    const shouldDelete = window.confirm(`Delete "${todo.title}"?`);
+
+    if (shouldDelete) {
+      onDeleteTodo(todo.id);
+    }
+  }
+
   return (
-    <li>
-      <form onSubmit={handleUpdate}>
+    <li
+      className={
+        todo.isCompleted
+          ? `${styles['todo-item']} ${styles['todo-item--completed']}`
+          : styles['todo-item']
+      }
+    >
+      <form className={styles['todo-item__form']} onSubmit={handleUpdate}>
         {isEditing ? (
-          <>
+          <div className={styles['todo-item__edit']}>
             <TextInputWithLabel
               elementId={`editTodo${todo.id}`}
               labelText="Edit Todo"
               value={workingTitle}
               onChange={handleEdit}
             />
-            <button type="button" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleUpdate}
-              disabled={!isValidTodoTitle(workingTitle)}
-            >
-              Update
-            </button>
-          </>
+
+            <div className={styles['todo-item__actions']}>
+              <button type="button" onClick={handleCancel}>
+                Cancel
+              </button>
+
+              <button type="submit" disabled={!isWorkingTitleValid}>
+                Update
+              </button>
+            </div>
+          </div>
         ) : (
-          <>
-            <label>
+          <div className={styles['todo-item__view']}>
+            <label className={styles['todo-item__checkbox-label']}>
               <input
                 type="checkbox"
                 id={`checkbox${todo.id}`}
                 checked={todo.isCompleted}
-                onChange={() => onCompleteTodo(todo.id)}
+                disabled={todo.isCompleted || isCompletingTodo}
+                onChange={handleComplete}
               />
+              <span className={styles['sr-only']}>Complete {todo.title}</span>
             </label>
-            <span onClick={() => setIsEditing(true)}>{todo.title}</span>
-          </>
+
+            <span className={styles['todo-item__title']}>{todo.title}</span>
+
+            {isCompletingTodo && (
+              <span className={styles['action-status']}>Completing...</span>
+            )}
+
+            <div className={styles['todo-item__actions']}>
+              <button type="button" onClick={() => setIsEditing(true)}>
+                Edit
+              </button>
+
+              <button type="button" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
         )}
       </form>
     </li>

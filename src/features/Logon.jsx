@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Logon() {
@@ -24,10 +25,17 @@ function Logon() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {authError && <p>{authError}</p>}
+    <form className={styles['auth-form']} onSubmit={handleSubmit}>
+      {authError && (
+        <p
+          className={`${styles.alert} ${styles['alert--error']}`}
+          role="alert"
+        >
+          {authError}
+        </p>
+      )}
 
-      <div>
+      <div className={styles['input-group']}>
         <label htmlFor="email">Email</label>
         <input
           id="email"
@@ -38,7 +46,7 @@ function Logon() {
         />
       </div>
 
-      <div>
+      <div className={styles['input-group']}>
         <label htmlFor="password">Password</label>
         <input
           id="password"

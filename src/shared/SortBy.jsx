@@ -1,3 +1,5 @@
+import styles from '../App.module.css';
+
 function SortBy({
   sortBy,
   onSortByChange,
@@ -5,7 +7,7 @@ function SortBy({
   onSortDirectionChange,
 }) {
   return (
-    <div>
+    <div className={styles['control-group']}>
       <label htmlFor="sortBy">Sort by</label>
       <select
         id="sortBy"

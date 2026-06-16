@@ -1,14 +1,15 @@
 import { NavLink, useNavigate } from 'react-router';
+import styles from '../App.module.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Navigation() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  const navLinkStyles = ({ isActive }) => ({
-    fontWeight: isActive ? 'bold' : 'normal',
-    textDecoration: isActive ? 'underline' : 'none',
-  });
+  const getNavLinkClassName = ({ isActive }) =>
+    isActive
+      ? `${styles['nav-link']} ${styles['nav-link--active']}`
+      : styles['nav-link'];
 
   async function handleLogout() {
     await logout();
@@ -16,30 +17,46 @@ function Navigation() {
   }
 
   return (
-    <nav>
-      <NavLink to="/about" style={navLinkStyles}>
-        About
-      </NavLink>
-
-      {isAuthenticated ? (
-        <>
-          <NavLink to="/todos" style={navLinkStyles}>
-            Todos
+    <nav aria-label="Main navigation">
+      <ul className={styles['site-nav']}>
+        <li>
+          <NavLink to="/about" className={getNavLinkClassName}>
+            About
           </NavLink>
+        </li>
 
-          <NavLink to="/profile" style={navLinkStyles}>
-            Profile
-          </NavLink>
+        {isAuthenticated ? (
+          <>
+            <li>
+              <NavLink to="/todos" className={getNavLinkClassName}>
+                Todos
+              </NavLink>
+            </li>
 
-          <button type="button" onClick={handleLogout}>
-            Log Out
-          </button>
-        </>
-      ) : (
-        <NavLink to="/login" style={navLinkStyles}>
-          Log In
-        </NavLink>
-      )}
+            <li>
+              <NavLink to="/profile" className={getNavLinkClassName}>
+                Profile
+              </NavLink>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                className={`${styles.button} ${styles['button--ghost']}`}
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <NavLink to="/login" className={getNavLinkClassName}>
+              Log In
+            </NavLink>
+          </li>
+        )}
+      </ul>
     </nav>
   );
 }

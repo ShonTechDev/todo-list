@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { useSearchParams } from 'react-router';
+import styles from '../App.module.css';
 import TodoForm from '../features/Todos/TodoForm.jsx';
 import TodoList from '../features/Todos/TodoList/TodoList.jsx';
 import SortBy from '../shared/SortBy.jsx';
@@ -249,6 +250,47 @@ function TodosPage() {
     }
   }
 
+  async function deleteTodo(id) {
+    const originalIndex = todoList.findIndex((todo) => todo.id === id);
+    const originalTodo = todoList[originalIndex];
+
+    if (!originalTodo) {
+      return;
+    }
+
+    dispatch({
+      type: TODO_ACTIONS.DELETE_TODO_START,
+      payload: { id },
+    });
+
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': token,
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Could not delete todo');
+      }
+
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_SUCCESS,
+      });
+    } catch (error) {
+      dispatch({
+        type: TODO_ACTIONS.DELETE_TODO_ERROR,
+        payload: {
+          originalIndex,
+          originalTodo,
+          error: error.message,
+        },
+      });
+    }
+  }
+
   function handleFilterChange(value) {
     dispatch({
       type: TODO_ACTIONS.SET_FILTER_TERM,
@@ -257,77 +299,104 @@ function TodosPage() {
   }
 
   return (
-    <div>
-      {error && (
-        <div>
-          <p>{error}</p>
-          <button
-            type="button"
-            onClick={() => dispatch({ type: TODO_ACTIONS.CLEAR_ERROR })}
-          >
-            Clear Error
-          </button>
+    <section className={`${styles.page} ${styles['todos-page']}`}>
+      <div className={`${styles['page-card']} ${styles['todos-page__card']}`}>
+        <div className={styles['page-heading']}>
+          <p className={styles['page-heading__eyebrow']}>Plan your day</p>
+          <h2>My Todos</h2>
+          <p>
+            Add, update, complete, delete, filter, and sort tasks from one
+            organized workspace.
+          </p>
         </div>
-      )}
 
-      {filterError && (
-        <div>
-          <p>{filterError}</p>
+        {error && (
+          <div
+            className={`${styles.alert} ${styles['alert--error']}`}
+            role="alert"
+          >
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => dispatch({ type: TODO_ACTIONS.CLEAR_ERROR })}
+            >
+              Clear Error
+            </button>
+          </div>
+        )}
 
-          <button
-            type="button"
-            onClick={() =>
-              dispatch({ type: TODO_ACTIONS.CLEAR_FILTER_ERROR })
+        {filterError && (
+          <div
+            className={`${styles.alert} ${styles['alert--warning']}`}
+            role="alert"
+          >
+            <p>{filterError}</p>
+
+            <div className={styles['button-row']}>
+              <button
+                type="button"
+                onClick={() =>
+                  dispatch({ type: TODO_ACTIONS.CLEAR_FILTER_ERROR })
+                }
+              >
+                Clear Filter Error
+              </button>
+
+              <button
+                type="button"
+                onClick={() => dispatch({ type: TODO_ACTIONS.RESET_FILTERS })}
+              >
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        )}
+
+        {isTodoListLoading && (
+          <p className={styles['loading-state']}>Loading todos...</p>
+        )}
+
+        <section
+          className={styles['todos-page__controls']}
+          aria-label="Todo controls"
+        >
+          <SortBy
+            sortBy={sortBy}
+            onSortByChange={(value) =>
+              dispatch({
+                type: TODO_ACTIONS.SET_SORT_BY,
+                payload: { sortBy: value },
+              })
             }
-          >
-            Clear Filter Error
-          </button>
+            sortDirection={sortDirection}
+            onSortDirectionChange={(value) =>
+              dispatch({
+                type: TODO_ACTIONS.SET_SORT_DIRECTION,
+                payload: { sortDirection: value },
+              })
+            }
+          />
 
-          <button
-            type="button"
-            onClick={() => dispatch({ type: TODO_ACTIONS.RESET_FILTERS })}
-          >
-            Reset Filters
-          </button>
-        </div>
-      )}
+          <StatusFilter />
 
-      {isTodoListLoading && <p>Loading todos...</p>}
+          <FilterInput
+            filterTerm={filterTerm}
+            onFilterChange={handleFilterChange}
+          />
+        </section>
 
-      <SortBy
-        sortBy={sortBy}
-        onSortByChange={(value) =>
-          dispatch({
-            type: TODO_ACTIONS.SET_SORT_BY,
-            payload: { sortBy: value },
-          })
-        }
-        sortDirection={sortDirection}
-        onSortDirectionChange={(value) =>
-          dispatch({
-            type: TODO_ACTIONS.SET_SORT_DIRECTION,
-            payload: { sortDirection: value },
-          })
-        }
-      />
+        <TodoForm onAddTodo={addTodo} />
 
-      <StatusFilter />
-
-      <FilterInput
-        filterTerm={filterTerm}
-        onFilterChange={handleFilterChange}
-      />
-
-      <TodoForm onAddTodo={addTodo} />
-
-      <TodoList
-        todoList={todoList}
-        dataVersion={dataVersion}
-        onCompleteTodo={completeTodo}
-        onUpdateTodo={updateTodo}
-        statusFilter={statusFilter}
-      />
-    </div>
+        <TodoList
+          todoList={todoList}
+          dataVersion={dataVersion}
+          onCompleteTodo={completeTodo}
+          onUpdateTodo={updateTodo}
+          onDeleteTodo={deleteTodo}
+          statusFilter={statusFilter}
+        />
+      </div>
+    </section>
   );
 }
 
