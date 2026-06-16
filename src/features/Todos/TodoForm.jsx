@@ -9,21 +9,27 @@ import {
 
 function TodoForm({ onAddTodo }) {
   const [workingTodoTitle, setWorkingTodoTitle] = useState('');
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
 
   const isTodoTitleValid = isValidTodoTitle(workingTodoTitle);
   const isOverCharacterLimit =
     workingTodoTitle.trim().length > TODO_TITLE_MAX_LENGTH;
 
-  const handleAddTodo = (event) => {
+  const handleAddTodo = async (event) => {
     event.preventDefault();
 
-    if (!isTodoTitleValid) {
+    if (!isTodoTitleValid || isAddingTodo) {
       return;
     }
 
-    onAddTodo(normalizeTodoTitle(workingTodoTitle));
+    setIsAddingTodo(true);
 
-    setWorkingTodoTitle('');
+    try {
+      await onAddTodo(normalizeTodoTitle(workingTodoTitle));
+      setWorkingTodoTitle('');
+    } finally {
+      setIsAddingTodo(false);
+    }
   };
 
   return (
@@ -40,6 +46,10 @@ function TodoForm({ onAddTodo }) {
           {workingTodoTitle.trim().length}/{TODO_TITLE_MAX_LENGTH} characters
         </span>
 
+        {isAddingTodo && (
+          <span className={styles['action-status']}>Adding todo...</span>
+        )}
+
         {isOverCharacterLimit && (
           <span className={styles['todo-form__error']}>
             Todo must be {TODO_TITLE_MAX_LENGTH} characters or fewer.
@@ -47,8 +57,8 @@ function TodoForm({ onAddTodo }) {
         )}
       </div>
 
-      <button type="submit" disabled={!isTodoTitleValid}>
-        Add Todo
+      <button type="submit" disabled={!isTodoTitleValid || isAddingTodo}>
+        {isAddingTodo ? 'Adding...' : 'Add Todo'}
       </button>
     </form>
   );

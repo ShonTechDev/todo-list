@@ -348,3 +348,9 @@ button:hover:not(:disabled),
 .site-nav li {
   display: flex;
 }
+
+.action-status {
+  color: #5f5a73;
+  font-size: 0.85rem;
+  font-weight: 700;
+}

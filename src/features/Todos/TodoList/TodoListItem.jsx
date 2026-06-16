@@ -9,6 +9,7 @@ import {
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [workingTitle, setWorkingTitle] = useState(todo.title);
+  const [isCompletingTodo, setIsCompletingTodo] = useState(false);
 
   const isWorkingTitleValid = isValidTodoTitle(workingTitle);
 
@@ -34,6 +35,20 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo }) {
     });
 
     setIsEditing(false);
+  }
+
+  async function handleComplete() {
+    if (todo.isCompleted || isCompletingTodo) {
+      return;
+    }
+
+    setIsCompletingTodo(true);
+
+    try {
+      await onCompleteTodo(todo.id);
+    } finally {
+      setIsCompletingTodo(false);
+    }
   }
 
   function handleDelete() {
@@ -79,13 +94,17 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo, onDeleteTodo }) {
                 type="checkbox"
                 id={`checkbox${todo.id}`}
                 checked={todo.isCompleted}
-                disabled={todo.isCompleted}
-                onChange={() => onCompleteTodo(todo.id)}
+                disabled={todo.isCompleted || isCompletingTodo}
+                onChange={handleComplete}
               />
               <span className={styles['sr-only']}>Complete {todo.title}</span>
             </label>
 
             <span className={styles['todo-item__title']}>{todo.title}</span>
+
+            {isCompletingTodo && (
+              <span className={styles['action-status']}>Completing...</span>
+            )}
 
             <div className={styles['todo-item__actions']}>
               <button type="button" onClick={() => setIsEditing(true)}>
