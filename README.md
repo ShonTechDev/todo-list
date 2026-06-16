@@ -11,8 +11,11 @@ Deployment on Netlify at this link: shontas-react-todoapp.netlify.app
 Add demo video link here after recording.***
 
 ## 📸 Screenshots
-![Todo page showing styled task list](./screenshots/todos-page.png)
-![Profile page showing todo statistics](./screenshots/profile-page.png)
+![Login page ](./screenshots/login-page.png)
+![Todos page - showing styled task list](./screenshots/todos-page.png)
+![About page - showing about todo app, features, technology used](./screenshots/about-page.png)
+![Profile page - showing todo statistics](./screenshots/profile-page.png)
+![Action Loading - showing action loading indicators](./screenshots/action-loading.png)
 
 ## 💻 Technologies Used
 - **Frontend:** React, React Router, CSS
